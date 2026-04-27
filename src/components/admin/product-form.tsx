@@ -81,7 +81,13 @@ export function ProductForm({ mode, initialData, categories }: ProductFormProps)
     setIsLoading(true);
 
     try {
-      const url = mode === "create" ? "/api/admin/products" : `/api/admin/products/${initialData.id}`;
+      const productId = initialData?.id;
+
+      if (mode === "edit" && !productId) {
+        throw new Error("Missing product id");
+      }
+
+      const url = mode === "create" ? "/api/admin/products" : `/api/admin/products/${productId}`;
       const method = mode === "create" ? "POST" : "PUT";
 
       const res = await fetch(url, {
