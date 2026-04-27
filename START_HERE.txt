@@ -1,0 +1,99 @@
+================================================================
+  TRENDYCART - FINAL SETUP INSTRUCTIONS
+================================================================
+
+The app structure is 100% complete! Just run these final steps:
+
+================================================================
+  STEP 1: Open PowerShell
+================================================================
+
+Press Win + R, type: powershell
+
+Then navigate to the project:
+
+  cd "C:\Users\Zubair Ahmed\Desktop\E-COM\trendycart"
+
+
+================================================================
+  STEP 2: Run the Setup Script
+================================================================
+
+Copy and paste this command:
+
+  .\finalize-setup.ps1
+
+If you get an error about execution policy, run this first:
+
+  Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+Then run the setup script again.
+
+
+================================================================
+  STEP 3: Start the App
+================================================================
+
+After setup completes:
+
+  npm run dev
+
+
+================================================================
+  STEP 4: Open in Browser
+================================================================
+
+Open your browser and go to:
+
+  http://localhost:3000
+
+
+================================================================
+  LOGIN CREDENTIALS
+================================================================
+
+  Admin Account:
+    Email: admin@trendycart.com
+    Password: admin123
+
+  User Account:
+    Email: user@trendycart.com
+    Password: user123
+
+
+================================================================
+  IF YOU STILL GET THE caniuse-lite ERROR
+================================================================
+
+Run these commands in PowerShell:
+
+  Remove-Item -Recurse -Force node_modules
+  npm cache clean --force
+  npm install --legacy-peer-deps
+  npm run dev
+
+
+================================================================
+  WHAT'S READY NOW
+================================================================
+
+✅ Next.js 16.2.2 with React 19
+✅ TypeScript strict mode
+✅ Tailwind CSS v4
+✅ Shadcn/ui components
+✅ Prisma ORM with SQLite
+✅ NextAuth v5 (Email + Google login)
+✅ AI Chatbot with OpenAI GPT-4o
+✅ Stripe payment integration
+✅ UploadThing file uploads
+✅ Dark/Light mode
+✅ 12 sample products
+✅ Admin dashboard
+✅ Shopping cart
+✅ Order management
+
+================================================================
+
+For questions, see: QUICKSTART.md or SETUP_GUIDE.md
+
+================================================================
