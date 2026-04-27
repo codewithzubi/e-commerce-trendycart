@@ -14,7 +14,7 @@ type ProductRecord = NonNullable<
 >;
 
 function normalizeImages(images: ProductRecord["images"]): string[] | null | undefined {
-  if (!images) return images;
+  if (images == null) return images;
 
   if (Array.isArray(images) && images.every((image) => typeof image === "string")) {
     return images;
