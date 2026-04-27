@@ -1,10 +1,59 @@
 import { prisma } from "@/lib/prisma";
-import { ProductForm } from "@/components/admin/product-form";
+import {
+  ProductForm,
+  type ProductFormInitialData,
+} from "@/components/admin/product-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+type ProductRecord = NonNullable<
+  Awaited<ReturnType<typeof prisma.product.findUnique>>
+>;
+
+function normalizeImages(images: ProductRecord["images"]): string[] | null | undefined {
+  if (!images) return images;
+
+  if (Array.isArray(images) && images.every((image) => typeof image === "string")) {
+    return images;
+  }
+
+  return undefined;
+}
+
+function toProductFormInitialData(product: ProductRecord): ProductFormInitialData {
+  return {
+    id: product.id,
+    title: product.title,
+    slug: product.slug,
+    description: product.description,
+    shortDescription: product.shortDescription,
+    price: product.price,
+    discountPrice: product.discountPrice,
+    sku: product.sku,
+    barcode: product.barcode,
+    stock: product.stock,
+    lowStockThreshold: product.lowStockThreshold,
+    trackInventory: product.trackInventory,
+    categoryId: product.categoryId,
+    tags: product.tags,
+    brand: product.brand,
+    images: normalizeImages(product.images),
+    thumbnail: product.thumbnail,
+    videoUrl: product.videoUrl,
+    isFeatured: product.isFeatured,
+    isActive: product.isActive,
+    isFreeShipping: product.isFreeShipping,
+    averageRating: product.averageRating,
+    reviewCount: product.reviewCount,
+    metaTitle: product.metaTitle,
+    metaDescription: product.metaDescription,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+  };
+}
 
 export default async function EditProductPage({
   params,
@@ -40,7 +89,11 @@ export default async function EditProductPage({
         </div>
       </div>
 
-      <ProductForm mode="edit" initialData={product} categories={categories} />
+      <ProductForm
+        mode="edit"
+        initialData={toProductFormInitialData(product)}
+        categories={categories}
+      />
     </div>
   );
 }

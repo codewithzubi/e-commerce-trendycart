@@ -38,7 +38,7 @@ type ProductFormState = {
   isActive: boolean;
 };
 
-type ProductFormInitialData = Partial<Product> & {
+export type ProductFormInitialData = Omit<Partial<Product>, "images"> & {
   id: string;
   images?: string[] | null;
 };
