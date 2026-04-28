@@ -10,7 +10,9 @@ import { formatPrice, cn } from "@/lib/utils";
 import { ShoppingCart, Star, Heart, Zap } from "lucide-react";
 import { addToCart, toggleWishlist } from "@/lib/actions";
 import { toast } from "sonner";
+import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
+import { getPrimaryProductImage } from "@/lib/product-images";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) return error.message;
@@ -25,12 +27,10 @@ export function ProductCardContent({ product }: ProductCardContentProps) {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { refreshCartCount } = useCart();
   const { refreshWishlistCount } = useWishlist();
 
-  const imageUrl =
-    product.thumbnail ||
-    (product.images ? JSON.parse(product.images as string)[0] : null) ||
-    "/placeholder-product.jpg";
+  const imageUrl = product.thumbnail || getPrimaryProductImage(product.images);
   const hasDiscount = product.discountPrice && product.discountPrice < product.price;
   const discountPercentage = hasDiscount
     ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
@@ -44,6 +44,7 @@ export function ProductCardContent({ product }: ProductCardContentProps) {
     setIsAddingToCart(true);
     try {
       await addToCart(product.id, 1);
+      await refreshCartCount();
       toast.success("Added to cart", {
         description: product.title,
       });
@@ -129,33 +130,6 @@ export function ProductCardContent({ product }: ProductCardContentProps) {
           <Heart className={cn("h-4 w-4 transition-all duration-300", isInWishlist && "fill-current")} />
         </Button>
 
-        {/* Hover CTA */}
-        <div className="absolute inset-x-0 bottom-0 z-20 translate-y-full p-3 transition-transform duration-500 ease-out group-hover:translate-y-0">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              handleAddToCart();
-            }}
-            disabled={isOutOfStock || isAddingToCart}
-            className="h-11 w-full border-0 bg-gradient-to-r from-fuchsia-500 via-pink-500 to-cyan-500 font-semibold text-white shadow-[0_16px_35px_rgba(236,72,153,0.28)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_18px_45px_rgba(236,72,153,0.34)]"
-            size="sm"
-          >
-            {isAddingToCart ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Adding...
-              </div>
-            ) : isOutOfStock ? (
-              "Out of Stock"
-            ) : (
-              <>
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Add to Cart
-              </>
-            )}
-          </Button>
-        </div>
-
         {isOutOfStock && (
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/55 backdrop-blur-sm dark:bg-slate-950/55">
             <Badge className="border-0 bg-slate-950/90 px-4 py-2 text-sm font-bold text-white dark:bg-white/90 dark:text-slate-950">
@@ -221,11 +195,11 @@ export function ProductCardContent({ product }: ProductCardContentProps) {
           </div>
         )}
 
-        <div className="mt-auto hidden pt-2 lg:block">
+        <div className="mt-auto border-t border-purple-100/70 px-4 pb-4 pt-3 dark:border-white/10">
           <Button
             onClick={handleAddToCart}
             disabled={isOutOfStock || isAddingToCart}
-            className="h-11 w-full border-0 bg-gradient-to-r from-violet-600 to-purple-600 font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-violet-700 hover:to-purple-700 hover:shadow-lg"
+            className="h-11 w-full border-0 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             size="sm"
           >
             {isAddingToCart ? (
@@ -243,30 +217,6 @@ export function ProductCardContent({ product }: ProductCardContentProps) {
             )}
           </Button>
         </div>
-      </div>
-
-      {/* Mobile bottom CTA */}
-      <div className="border-t border-purple-100/70 px-4 pb-4 pt-0 lg:hidden dark:border-white/10">
-        <Button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock || isAddingToCart}
-          className="h-11 w-full border-0 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 font-semibold text-white shadow-md transition-all duration-300 hover:shadow-lg"
-          size="sm"
-        >
-          {isAddingToCart ? (
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Adding...
-            </div>
-          ) : isOutOfStock ? (
-            "Out of Stock"
-          ) : (
-            <>
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Add to Cart
-            </>
-          )}
-        </Button>
       </div>
     </div>
   );

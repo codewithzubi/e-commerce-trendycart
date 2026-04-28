@@ -1,22 +1,16 @@
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { OrderStatusDropdown } from "@/components/admin/order-status-dropdown";
-import { Eye, ShoppingCart, Filter, Download } from "lucide-react";
+import { ShoppingCart, Filter, Download } from "lucide-react";
 import Link from "next/link";
+import { getOrderStatusBadgeClass, getOrderStatusLabel } from "@/lib/order-status";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
-
-const statusLabels: Record<string, string> = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -26,7 +20,7 @@ export default async function AdminOrdersPage({
   const { status } = await searchParams;
 
   const orders = await prisma.order.findMany({
-    where: status ? { status: status as any } : {},
+    where: status ? { status: status as "PENDING" | "PROCESSING" | "SHIPPED" | "OUT_FOR_DELIVERY" | "DELIVERED" | "CANCELLED" } : {},
     include: { items: true, user: { select: { name: true, email: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -37,6 +31,7 @@ export default async function AdminOrdersPage({
     pending: orders.filter((o) => o.status === "PENDING").length,
     processing: orders.filter((o) => o.status === "PROCESSING").length,
     shipped: orders.filter((o) => o.status === "SHIPPED").length,
+    outForDelivery: orders.filter((o) => o.status === "OUT_FOR_DELIVERY").length,
     delivered: orders.filter((o) => o.status === "DELIVERED").length,
     cancelled: orders.filter((o) => o.status === "CANCELLED").length,
   };
@@ -63,6 +58,7 @@ export default async function AdminOrdersPage({
         <StatCard label="Pending" value={stats.pending} active={status === "PENDING"} href="/admin/orders?status=PENDING" />
         <StatCard label="Processing" value={stats.processing} active={status === "PROCESSING"} href="/admin/orders?status=PROCESSING" />
         <StatCard label="Shipped" value={stats.shipped} active={status === "SHIPPED"} href="/admin/orders?status=SHIPPED" />
+        <StatCard label="Out for Delivery" value={stats.outForDelivery} active={status === "OUT_FOR_DELIVERY"} href="/admin/orders?status=OUT_FOR_DELIVERY" />
         <StatCard label="Delivered" value={stats.delivered} active={status === "DELIVERED"} href="/admin/orders?status=DELIVERED" />
         <StatCard label="Cancelled" value={stats.cancelled} active={status === "CANCELLED"} href="/admin/orders?status=CANCELLED" />
       </div>
@@ -96,6 +92,9 @@ export default async function AdminOrdersPage({
                   <div>
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="font-bold text-lg font-mono">{order.orderNumber}</h3>
+                      <Badge className={getOrderStatusBadgeClass(order.status)}>
+                        {getOrderStatusLabel(order.status)}
+                      </Badge>
                       <Badge variant={order.paymentStatus === "PAID" ? "success" : "secondary"}>
                         {order.paymentStatus}
                       </Badge>
@@ -122,11 +121,15 @@ export default async function AdminOrdersPage({
                         <div key={item.id} className="flex items-center justify-between text-sm p-2 rounded hover:bg-muted/30">
                           <div className="flex items-center gap-3">
                             {item.productImage && (
-                              <img
-                                src={item.productImage}
-                                alt={item.productTitle}
-                                className="w-10 h-10 object-cover rounded border"
-                              />
+                              <div className="relative h-10 w-10 overflow-hidden rounded border">
+                                <Image
+                                  src={item.productImage}
+                                  alt={item.productTitle}
+                                  fill
+                                  className="object-cover"
+                                  sizes="40px"
+                                />
+                              </div>
                             )}
                             <div>
                               <span className="font-medium">{item.productTitle}</span>

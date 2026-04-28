@@ -1,8 +1,6 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from "react";
-import { useSession } from "next-auth/react";
-import { getWishlistItemCount } from "@/lib/actions";
 
 interface WishlistContextType {
   wishlistCount: number;
@@ -19,17 +17,27 @@ export function useWishlist() {
 }
 
 export function WishlistProvider({ children }: PropsWithChildren) {
-  const { data: session } = useSession();
   const [wishlistCount, setWishlistCount] = useState(0);
 
   const refreshWishlistCount = useCallback(async () => {
-    if (session?.user?.id) {
-      const count = await getWishlistItemCount();
-      setWishlistCount(count);
-    } else {
+    try {
+      const response = await fetch("/api/wishlist/count", {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        setWishlistCount(0);
+        return;
+      }
+
+      const data = (await response.json()) as { count?: number };
+      setWishlistCount(typeof data.count === "number" ? data.count : 0);
+    } catch {
       setWishlistCount(0);
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

@@ -32,8 +32,9 @@ export function OrderStatusDropdown({ orderId, currentStatus }: OrderStatusDropd
 
       setStatus(newStatus);
       toast.success("Order status updated");
-    } catch (error: any) {
-      toast.error("Failed to update status", { description: error.message });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error("Failed to update status", { description: message });
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +49,7 @@ export function OrderStatusDropdown({ orderId, currentStatus }: OrderStatusDropd
         <SelectItem value="PENDING">Pending</SelectItem>
         <SelectItem value="PROCESSING">Processing</SelectItem>
         <SelectItem value="SHIPPED">Shipped</SelectItem>
+        <SelectItem value="OUT_FOR_DELIVERY">Out for delivery</SelectItem>
         <SelectItem value="DELIVERED">Delivered</SelectItem>
         <SelectItem value="CANCELLED">Cancelled</SelectItem>
       </SelectContent>

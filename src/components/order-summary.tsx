@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
+import { getPrimaryProductImage } from "@/lib/product-images";
 import type { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,21 +43,7 @@ export function OrderSummary({ items, subtotal, shippingCost, tax, totalAmount }
         <div className="space-y-3">
         {items.map((item) => {
           const price = item.product.discountPrice || item.product.price;
-          const imageUrl = (() => {
-            if (item.product.thumbnail) return item.product.thumbnail;
-            if (Array.isArray(item.product.images) && typeof item.product.images[0] === "string") {
-              return item.product.images[0];
-            }
-            if (typeof item.product.images === "string") {
-              try {
-                const parsed = JSON.parse(item.product.images);
-                if (Array.isArray(parsed) && typeof parsed[0] === "string") return parsed[0];
-              } catch {
-                return "/placeholder-product.jpg";
-              }
-            }
-            return "/placeholder-product.jpg";
-          })();
+          const imageUrl = item.product.thumbnail || getPrimaryProductImage(item.product.images);
 
             return (
               <div

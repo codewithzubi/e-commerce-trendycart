@@ -1,8 +1,6 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, type PropsWithChildren } from "react";
-import { getCartItemCount } from "@/lib/actions";
-import { useSession } from "next-auth/react";
 
 interface CartContextType {
   cartCount: number;
@@ -19,20 +17,34 @@ export function useCart() {
 }
 
 export function CartProvider({ children }: PropsWithChildren) {
-  const { data: session } = useSession();
   const [cartCount, setCartCount] = useState(0);
 
   const refreshCartCount = useCallback(async () => {
-    if (session?.user?.id) {
-      const count = await getCartItemCount();
-      setCartCount(count);
-    } else {
+    try {
+      const response = await fetch("/api/cart/count", {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        setCartCount(0);
+        return;
+      }
+
+      const data = (await response.json()) as { count?: number };
+      setCartCount(typeof data.count === "number" ? data.count : 0);
+    } catch {
       setCartCount(0);
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
-    refreshCartCount();
+    const timer = window.setTimeout(() => {
+      void refreshCartCount();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [refreshCartCount]);
 
   return (

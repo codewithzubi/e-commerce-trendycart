@@ -4,6 +4,7 @@ import { auth, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { formatDate, formatPrice, cn } from "@/lib/utils";
+import { getPrimaryProductImage } from "@/lib/product-images";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +30,7 @@ const statusColors: Record<string, string> = {
   PENDING: "border-amber-200/70 bg-amber-50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-200",
   PROCESSING: "border-blue-200/70 bg-blue-50 text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200",
   SHIPPED: "border-purple-200/70 bg-purple-50 text-purple-700 dark:border-purple-900/40 dark:bg-purple-950/20 dark:text-purple-200",
+  OUT_FOR_DELIVERY: "border-cyan-200/70 bg-cyan-50 text-cyan-700 dark:border-cyan-900/40 dark:bg-cyan-950/20 dark:text-cyan-200",
   DELIVERED: "border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-200",
   CANCELLED: "border-rose-200/70 bg-rose-50 text-rose-700 dark:border-rose-900/40 dark:bg-rose-950/20 dark:text-rose-200",
 };
@@ -339,9 +341,7 @@ export default async function DashboardPage() {
                     {wishlistPreview.length > 0 ? (
                       wishlistPreview.map((item) => {
                         const product = item.product;
-                        const imageUrl =
-                          product.thumbnail ||
-                          (product.images ? JSON.parse(product.images as string)[0] : "/placeholder-product.jpg");
+                        const imageUrl = product.thumbnail || getPrimaryProductImage(product.images);
                         const price = product.discountPrice || product.price;
                         return (
                           <Link

@@ -16,20 +16,69 @@ export async function PATCH(
   const { id } = await params;
   const { status } = await req.json();
 
-  const validStatuses = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+  const validStatuses = ["PENDING", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"];
   if (!validStatuses.includes(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
   try {
-    await prisma.order.update({
+    // Prisma client in local dev can lag behind the current schema during generation.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = prisma as any;
+
+    const existingOrder = await db.order.findUnique({
       where: { id },
-      data: { status },
+      select: { status: true, shippedAt: true, deliveredAt: true },
     });
 
+    if (!existingOrder) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    const now = new Date();
+
+    const updatedOrder = await db.order.update({
+      where: { id },
+      data: {
+        status,
+        shippedAt:
+          status === "SHIPPED"
+            ? existingOrder.shippedAt ?? now
+            : undefined,
+        deliveredAt:
+          status === "DELIVERED"
+            ? existingOrder.deliveredAt ?? now
+            : undefined,
+      },
+    });
+
+    if (existingOrder.status !== status) {
+      await db.orderStatusHistory.create({
+        data: {
+          orderId: updatedOrder.id,
+          status,
+          note:
+            status === "PENDING"
+              ? "Order placed"
+              : status === "PROCESSING"
+                ? "Order is being prepared"
+                : status === "SHIPPED"
+                  ? "Package handed to courier"
+                  : status === "OUT_FOR_DELIVERY"
+                    ? "Courier is on the way"
+                    : status === "DELIVERED"
+                      ? "Order delivered successfully"
+                      : "Order cancelled",
+        },
+      });
+    }
+
     revalidatePath("/admin/orders");
+    revalidatePath("/orders");
+    revalidatePath("/dashboard");
+    revalidatePath(`/orders/${id}/track`);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
   }
 }

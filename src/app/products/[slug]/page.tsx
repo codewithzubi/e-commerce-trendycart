@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { ProductDetailClient } from "@/components/product-detail-client";
 import { ProductCard } from "@/components/product-card";
+import { normalizeProductImages } from "@/lib/product-images";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default async function ProductPage({
     notFound();
   }
 
-  const images = product.images ? JSON.parse(product.images as string) : [];
+  const images = normalizeProductImages(product.images);
 
   const relatedProducts = await getProducts({
     categorySlug: product.category?.slug,

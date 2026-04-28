@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CartItemActions } from "@/components/cart-item-actions";
+import { getPrimaryProductImage } from "@/lib/product-images";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -99,9 +100,7 @@ export default async function CartPage() {
             {cart.items.map((item) => {
               const unitPrice = item.product.discountPrice || item.product.price;
               const itemTotal = unitPrice * item.quantity;
-              const imageUrl =
-                item.product.thumbnail ||
-                (item.product.images ? JSON.parse(item.product.images as string)[0] : "/placeholder-product.jpg");
+              const imageUrl = item.product.thumbnail || getPrimaryProductImage(item.product.images);
               const hasDiscount = item.product.discountPrice && item.product.discountPrice < item.product.price;
 
               return (

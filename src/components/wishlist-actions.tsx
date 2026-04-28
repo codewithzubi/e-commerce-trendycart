@@ -5,6 +5,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { addToCart, removeFromWishlist } from "@/lib/actions";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 
 interface WishlistActionsProps {
@@ -23,6 +24,7 @@ export function WishlistActions({
   isOutOfStock = false 
 }: WishlistActionsProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshCartCount } = useCart();
   const { refreshWishlistCount } = useWishlist();
 
   const handleAddToCart = async () => {
@@ -30,6 +32,7 @@ export function WishlistActions({
     setIsLoading(true);
     try {
       await addToCart(productId, 1);
+      await refreshCartCount();
       toast.success("Added to cart");
     } catch (error: unknown) {
       if (getErrorMessage(error).includes("NEXT_REDIRECT")) return;

@@ -168,6 +168,17 @@ body {
   animation: scale-in 0.3s ease-out;
 }
 
+/* Marquee */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-scroll {
+  animation: marquee-scroll 28s linear infinite;
+  will-change: transform;
+}
+
 /* Hover Effects */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;

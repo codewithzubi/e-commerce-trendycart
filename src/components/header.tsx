@@ -144,25 +144,25 @@ export function Header() {
             <ThemeToggle />
 
             {/* Wishlist */}
-            <Link href="/wishlist">
+            <Link href="/wishlist" aria-label={`Wishlist${wishlistCount > 0 ? ` (${wishlistCount})` : ""}`}>
               <Button variant="ghost" size="icon" className={cn("relative hidden sm:inline-flex", iconButtonClass)}>
                 <Heart className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
                 {wishlistCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 border-2 border-white p-0 flex items-center justify-center text-[10px] font-bold text-white shadow-lg shadow-pink-500/30"
+                    className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white px-1 text-[10px] font-bold text-white shadow-lg shadow-pink-500/30 dark:border-slate-950"
                     style={{
                       background: "linear-gradient(135deg, #ec4899 0%, #7c3aed 55%, #06b6d4 100%)",
                     }}
                   >
-                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
                   </Badge>
                 )}
               </Button>
             </Link>
 
             {/* Cart */}
-            <Link href="/cart">
+            <Link href="/cart" aria-label={`Cart${cartCount > 0 ? ` (${cartCount})` : ""}`}>
               <Button
                 variant="ghost"
                 size="icon"
@@ -172,12 +172,12 @@ export function Header() {
                 {cartCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 border-2 border-white p-0 flex items-center justify-center text-[10px] font-bold text-white shadow-lg shadow-pink-500/30"
+                    className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white px-1 text-[10px] font-bold text-white shadow-lg shadow-pink-500/30 dark:border-slate-950"
                     style={{
                       background: "linear-gradient(135deg, #ec4899 0%, #7c3aed 55%, #06b6d4 100%)",
                     }}
                   >
-                    {cartCount > 9 ? "9+" : cartCount}
+                    {cartCount > 99 ? "99+" : cartCount}
                   </Badge>
                 )}
               </Button>
@@ -289,7 +289,11 @@ export function Header() {
                 <Button
                   onClick={() => signIn()}
                   size="sm"
-                  className="rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-cyan-500 text-white shadow-lg shadow-fuchsia-500/25 transition-all duration-300 hover:scale-105 hover:shadow-fuchsia-500/35"
+                  variant="outline"
+                  className={cn(
+                    "rounded-full border-slate-200/80 bg-white/70 px-4 font-medium text-slate-800 shadow-none transition-all duration-300 hover:bg-white hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10",
+                    isScrolled ? "border-slate-200/80" : "border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white"
+                  )}
                 >
                   Sign In
                 </Button>
@@ -404,7 +408,8 @@ export function Header() {
               ) : (
                 <Button
                   onClick={() => signIn()}
-                  className="w-full rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-cyan-500 text-white shadow-lg shadow-fuchsia-500/25"
+                  variant="outline"
+                  className="w-full rounded-full border-white/15 bg-white/10 text-white hover:bg-white/15"
                   size="sm"
                 >
                   Sign In

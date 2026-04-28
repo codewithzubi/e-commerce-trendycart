@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product-card";
+import { getPrimaryProductImage } from "@/lib/product-images";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag, ArrowRight, Trash2 } from "lucide-react";
@@ -51,7 +52,7 @@ export default async function WishlistPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {wishlist.items.map((item) => {
           const product = item.product;
-          const imageUrl = product.thumbnail || (product.images ? JSON.parse(product.images as string)[0] : null) || "/placeholder-product.jpg";
+          const imageUrl = product.thumbnail || getPrimaryProductImage(product.images);
           const hasDiscount = product.discountPrice && product.discountPrice < product.price;
           const isOutOfStock = product.trackInventory && product.stock === 0;
 

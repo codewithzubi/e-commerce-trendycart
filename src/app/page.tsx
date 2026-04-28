@@ -1,5 +1,6 @@
 import { getFeaturedProducts, getCategories } from "@/lib/actions";
 import { ProductCard } from "@/components/product-card";
+import { HomeNewsTicker } from "@/components/home-news-ticker";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
@@ -239,52 +240,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Features Bar */}
-      <section className="relative z-10 -mt-6 pb-10 sm:-mt-8 sm:pb-12 lg:-mt-10">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 gap-4 rounded-[2rem] border border-purple-100/80 bg-white/85 p-4 shadow-[0_18px_60px_rgba(76,29,149,0.10)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70 sm:grid-cols-2 sm:gap-5 sm:p-5 lg:p-6 xl:grid-cols-4 lg:gap-6">
-            <div className="group flex items-center gap-4 rounded-2xl border border-purple-100/70 bg-gradient-to-br from-purple-50 to-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:from-purple-950/30 dark:to-slate-950/60">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-500/20 transition-transform duration-300 group-hover:scale-110">
-                <Truck className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">Fast Delivery</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Quick shipping on all orders</p>
-              </div>
-            </div>
-
-            <div className="group flex items-center gap-4 rounded-2xl border border-pink-100/70 bg-gradient-to-br from-pink-50 to-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:from-pink-950/25 dark:to-slate-950/60">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-lg shadow-pink-500/20 transition-transform duration-300 group-hover:scale-110">
-                <ShieldCheck className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">Secure Payment</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Protected and trusted checkout</p>
-              </div>
-            </div>
-
-            <div className="group flex items-center gap-4 rounded-2xl border border-cyan-100/70 bg-gradient-to-br from-cyan-50 to-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:from-cyan-950/25 dark:to-slate-950/60">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20 transition-transform duration-300 group-hover:scale-110">
-                <RefreshCw className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">Easy Returns</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">30-day hassle-free policy</p>
-              </div>
-            </div>
-
-            <div className="group flex items-center gap-4 rounded-2xl border border-amber-100/70 bg-gradient-to-br from-amber-50 to-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:from-amber-950/25 dark:to-slate-950/60">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-pink-500 to-fuchsia-500 shadow-lg shadow-fuchsia-500/20 transition-transform duration-300 group-hover:scale-110">
-                <Star className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">Premium Quality</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Carefully selected products</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HomeNewsTicker />
 
       {/* Categories Section - Modern Colorful Design */}
       <section className="bg-gradient-to-b from-white via-purple-50/30 to-white py-20 dark:from-background dark:via-purple-950/10 dark:to-background">

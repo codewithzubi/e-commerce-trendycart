@@ -27,6 +27,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
+  OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
 }
@@ -345,12 +346,26 @@ model Order {
   updatedAt       DateTime      @updatedAt
 
   items           OrderItem[]
+  statusHistory   OrderStatusHistory[]
 
   @@index([userId])
   @@index([status])
   @@index([orderNumber])
   @@index([createdAt(sort: Desc)])
   @@map("orders")
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
+  @@index([status])
+  @@map("order_status_history")
 }
 
 model OrderItem {
